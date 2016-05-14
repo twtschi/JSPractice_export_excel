@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<%
+if Request("TableHtmlTXT") > "" then
+    Response.ContentType = "application/vnd.ms-excel"
+    Response.write( Request("TableHtmlTXT") )
+    Response.End
+end if
+%>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Test Template</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+	<link href="css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="css/simple-sidebar.css" rel="stylesheet">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn"t work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+
+</head>
+<style>
+
+table {
+    padding: 5px;
+
+}
+
+
+
+</style>
+<body>
+
+    <div id="wrapper">
+
+        <!-- Sidebar -->
+        <div id="sidebar-wrapper"  >
+            <ul class="sidebar-nav">
+                <li class="sidebar-brand">
+                    <a href="#">
+                        Start Bootstrap
+                    </a>
+                </li>
+                <li>
+                    <a href="#">Dashboard</a>
+                </li>
+                <li>
+                    <a href="#">Shortcuts</a>
+                </li>
+                <li>
+                    <a href="#">Overview</a>
+                </li>
+                <li>
+                    <a href="#">Events</a>
+                </li>
+                <li>
+                    <a href="#">About</a>
+                </li>
+                <li>
+                    <a href="#">Services</a>
+                </li>
+                <li>
+                    <a href="#">Contact</a>
+                </li>
+            </ul>
+        </div>
+        <!-- /#sidebar-wrapper -->
+
+        <!-- Page Content -->
+        <div id="page-content-wrapper">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h1>請輸入以下內容 </h1>
+                        <p>課程名稱: </p>
+						<input type="text" class="form-control" id="course_name">
+						<p>授課教師: </p>
+						<input type="text" class="form-control" id="course_lecturer"/>
+						<p>開始日期&時間: </p>
+						<div class="input-group date" id="course_start">
+							<input type="text" class="form-control" />
+							<span class="input-group-addon">
+							<span class="glyphicon glyphicon-calendar"></span>
+							</span>
+						</div>
+						<p>結束日期&時間: </p>
+						<div class="input-group date" id="course_end">
+							<input type="text" class="form-control" />
+							<span class="input-group-addon">
+							<span class="glyphicon glyphicon-calendar"></span>
+							</span>
+						</div>
+						<p></p>
+                        <a href="#menu-toggle" class="btn btn-default" onclick="ExportExcel()">GO!</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /#page-content-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+		<div id="TableDIV" style=display:none>
+		
+		</div>
+    <!-- jQuery -->
+    <script src="js/jquery.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="js/bootstrap.min.js"></script>
+	<script src="js/bootstrap-datetimepicker.min.js"></script>
+    <!-- Menu Toggle Script -->
+    <script type="text/javascript">
+    $("#menu-toggle").click(function(e) {
+        e.preventDefault();
+        $("#wrapper").toggleClass("toggled");
+    });
+
+
+	$(function(){
+		$("#course_start").datetimepicker({
+		autoclose:true,
+		todayBtn:true,
+		todayHighlight:true,
+		inputMask: true,
+		pickerPosition: "bottom-left",
+		pickTime:false,
+		});
+
+		$("#course_end").datetimepicker({
+		autoclose:true,
+		todayBtn:true,
+		todayHighlight:true,
+		inputMask: true,
+		pickerPosition: "bottom-left",
+		pickTime:false,
+		});
+	});
+
+	function ExportExcel(){
+	createCalendar("TableDIV");
+    document.all.TableHtmlTXT.value = document.all.TableDIV.innerHTML;
+    form1.submit();
+}
+
+function createCalendar(whichDiv)
+{
+  var strCalendar = "";
+  var get_start_date = $course_start.value.date().day()
+  var get_end_date = $course_end.value.date().day()
+  
+  // 每月日數陣列
+  var monthDays = new Array(31,28,31,30,31,30,31,31,30,31,30,31);
+
+  // 閏年判斷
+  mYear = date.getFullYear();
+  if ( ( (mYear % 4 == 0) && (mYear % 100 != 0) ) || (mYear % 400 == 0) ) monthDays[1] = 29;
+
+  // 設定日期為該月第一天
+  date.setDate(1);
+
+  // 該月第一天的星期
+  var day = date.getDay();
+
+  // 計算秀出時需要的格數
+  var total = monthDays[date.getMonth()] + day;
+  var totalCells = total + ( total%7 ? 7 - total%7 : 0  );
+
+
+  strCalendar ='<TABLE cellSpacing="1" cellPadding="0" align="center" width="400" bgcolor="#888888">';
+  strCalendar += '<TR>';
+  strCalendar += '<TH></TH>';
+  strCalendar += "<TH>日</TH>";
+  strCalendar += '<TH>一</TH>';
+  strCalendar += '<TH>二</TH>';
+  strCalendar += '<TH>三</TH>';
+  strCalendar += '<TH>四</TH>';
+  strCalendar += '<TH>五</TH>';
+  strCalendar += '<TH>六</TH>';
+  strCalendar += '</TR>';
+
+
+  for (i=0;i<totalCells;i++)
+  {
+	if ( i%7 == 0 )
+		strCalendar+="<TR><TD>&nbsp;</TD>";
+
+
+	if ( i >= day && i < total )
+	{
+		if ( i >= day )
+		{
+			var whichDate = date.getFullYear() + "/" + (date.getMonth()+1) + "/" + ((i-day)+1);
+			strCalendar += "<TD>"+((i-day)+1);
+			strCalendar += "<input id='Identity' type='hidden' value='" + whichDate + "'>";
+		}
+	}
+	else
+	{
+		strCalendar += "<TD>&nbsp;";
+	}
+
+
+	strCalendar += "</TD>";
+
+
+	if ( i%7 == 6 )
+		strCalendar += "</TR>";
+   }
+
+   document.getElementById(whichDiv).innerHTML = strCalendar;
+}
+
+
+
+    </script>
+
+</body>
+
+</html>
